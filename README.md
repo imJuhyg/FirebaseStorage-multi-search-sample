@@ -41,7 +41,7 @@
 
 3. Firebase Storage에 검색할 수 있는 이미지파일을 업로드하세요. 예제에서는 Google에서 제공하는 Material Icon을 사용합니다.
 
-   Google material icons는 구글에서 해상도별로 제공하는 아이콘 디자인 모음입니다. 따라서 멀티서치에 사용하기에도 적합합니다. 예제를 수월하게 따라하실 수 있도록 이름과 폴더를 깔끔하게 정리하여 깃 저장소에 올려두었습니다.
+   Google material icons는 구글에서 해상도별로 제공하는 아이콘 디자인 모음입니다. 따라서 멀티서치에 사용하기에도 적합합니다. <b>예제를 수월하게 따라하실 수 있도록 이름과 폴더를 깔끔하게 정리하여 깃 저장소에 올려두었습니다.</b>
 
 4. Firebase, Glide 라이브러리를 모듈수준 build.gradle에 삽입하세요.
 
@@ -70,16 +70,17 @@ Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 �
 
 
 
-#### Firebase Storage 사용방식
+
+
+### Firebase Storage 사용방식
 
 <b>우선 저장소에있는 개별 Url을 불러오는 방법입니다.</b>
 
 1. 먼저 FirebaseStorage의 instance를 가져옵니다.
 
-~~~kotlin
-```
+```kotlin
 val storage = FirebaseStorage.getInstance()
-~~~
+```
 
 
 
@@ -92,7 +93,7 @@ val reference = storage.reference.child("google_icons/drawable-xhdpi/icon.png")
 
 ```
 
-변수 reference는 StorageReference 타입이며 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다.
+변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다.
 
 
 
@@ -100,15 +101,17 @@ val reference = storage.reference.child("google_icons/drawable-xhdpi/icon.png")
 
 ```kotlin
 reference.downloadUrl.addOnSuccessListener { uri ->
-    // ... 다운로드에 성공한 경우입니다 ... //
-    // ... Uri값을 반환받습니다 ... //
+	/* 다운로드에 성공한 경우입니다 */
+  /* Uri값을 받습니다 */
 
 }.addOnFailureListener { exception ->
-	// ... 다운로드에 실패한 경우입니다... //
+	/* 다운로드에 실패한 경우입니다 */
 }
 ```
 
 downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트워킹 작업을 위해 스레드를 따로 생성할 필요가 없습니다.
+
+
 
 
 
@@ -119,6 +122,8 @@ downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트
 list()는 pageToken을 통해 파일들에 대한 StorageReference를 일정단위로 잘라서 가져올 수 있습니다. 일관된 페이지 수를 제공해야 하거나 추가 결과를 가져올 시기를 제어할 때 사용합니다.
 
 listAll()은 하위 경로에 있는 모든 파일에 대한 StorageReference를 리스트형태로 반환 받을 수 있습니다.
+
+
 
 
 
@@ -158,6 +163,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
   	// ... ///
 
 ```
+
+
 
 
 
