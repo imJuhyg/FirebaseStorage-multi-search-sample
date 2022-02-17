@@ -1,7 +1,5 @@
 # FirebaseStorage multi search sample
 
----
-
 ### 개요
 
 1. 이 예제는 Firebase Storage와 Glide를 사용하여 수 천개의 이미지 파일 중 사용자가 검색한 파일만을 가져오는 작업을 다룹니다.
@@ -14,7 +12,7 @@
 
 ### 준비
 
-1. Firebase Storage를 생성하고 앱 프로젝트에 적용해주세요. 자세한 절차는 [Firebase 문서]https://firebase.google.com/docs/android/setup?authuser=1 를 참조하세요.
+1. Firebase Storage를 생성하고 앱 프로젝트에 적용해주세요. 자세한 절차는 [Firebase 문서](https://firebase.google.com/docs/android/setup?authuser=1) 를 참조하세요.
 
 2. Firebase Storage에 검색할 수 있는 이미지파일을 준비해주세요. 예제에서는 Google에서 제공하는 Material Icon을 사용합니다.
 
