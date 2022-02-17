@@ -1,0 +1,2 @@
+rootProject.name = "Storage multi search"
+include ':app'
