@@ -13,6 +13,7 @@ import com.example.storagemultisearch.util.getDeviceDpi
 import com.example.storagemultisearch.util.getNetworkState
 import com.example.storagemultisearch.util.registerNetworkCallback
 import com.example.storagemultisearch.util.unregisterNetworkCallback
+import com.google.android.gms.auth.api.signin.internal.Storage
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.*
 import kotlinx.coroutines.*
@@ -49,6 +50,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        ///
+
+        val reference: StorageReference = storage.reference.child(
+            "google_icons/drawable-xxhdpi/"
+        ) // drawable-xxhdpi폴더의 하위 항목들에 대한 StorageReference를 생성합니다.
+
+        val listAllTask2: Task<ListResult> = reference.listAll()
+        listAllTask2.addOnFailureListener {
+
+
+        }.addOnCompleteListener {
+            if (it.isSuccessful) {
+                /* 성공적으로 결과를 불러왔을 경우입니다 */
+
+                val referenceList: List<StorageReference> = it.result!!.items
+        }
+
+
+        ///
 
         if(!getNetworkState()) {
             /* 순간적인 네트워크 상태를 알 수 있습니다 */
