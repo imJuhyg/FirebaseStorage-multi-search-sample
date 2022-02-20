@@ -240,9 +240,7 @@ listAllTask.addOnFailureListener {
    
      // ... //
    }
-   ```
-
-   ​        
+   ```    
 
    ​      
 
@@ -276,10 +274,6 @@ listAllTask.addOnFailureListener {
      }
    }
    ```
-
-​    
-
-util/DeviceDpi.kt의 getDeviceDpi() 메소드를 사용하세요.
 
   EditText의 enabled 기본값은 false입니다. 이는 전체 경로를 참조할 수 있는 StorageReference 리스트가 생성되지 않았을 때 사용자가 검색하는 것을 방지합니다.
 
