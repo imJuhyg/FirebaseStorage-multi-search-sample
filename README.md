@@ -2,7 +2,7 @@
 
 ### 개요
 
-1. 이 예제는 Firebase Storage와 Glide를 사용하여 수 천개의 이미지 파일 중 사용자가 검색한 파일만을 가져오는 작업을 다룹니다.
+1. 이 예제는 사용자가 입력한 내용의 일부분을 검색하여 복수 개의 결과를 가져오는 작업을 다룹니다.
 
 2. Firebase Storage에서 멀티서치를 다루는 자료가 부족하여 직접 제작하게 되었습니다. 그러나 예제보다 더 효율적인 방법이 있을 수도 있습니다.
 
@@ -19,6 +19,14 @@
 * Library <b>Firebase, Glide, Coroutine</b>
 
 
+
+---
+
+### 미리보기
+
+예제를 통해 아래와 같은 결과물을 만들 수 있습니다.
+
+  <img width="20%" src="./gif/sample_1.gif"/>
 
 ---
 
@@ -66,7 +74,7 @@
 
 
 
-Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 저장하고 공유할 수 있도록 해줍니다. 클라우드에 업로드되어있는 파일들을 내려받을 수도 있고 업로드할 수도 있습니다. 또한 네트워크 상태가 좋지 못할 때 자동으로 중단된 위치부터 작업을 재시도해주는 장점도 있습니다.
+Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 저장하고 공유할 수 있도록 해줍니다. 클라우드에 업로드되어있는 파일들을 내려받을 수도 있고 업로드할 수도 있습니다. 또한 네트워크 상태가 좋지 못할 때 자동으로 중단된 위치부터 작업을 재시도해주는 장점도 있습니다.  
 
 
 
@@ -109,7 +117,7 @@ reference.downloadUrl.addOnSuccessListener { uri ->
 }
 ```
 
-downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트워킹 작업을 위해 스레드를 따로 생성할 필요가 없습니다.
+downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트워킹 작업을 위해 스레드를 따로 생성할 필요가 없습니다.  
 
 
 
@@ -168,7 +176,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 
 
-2. listAll() - StorageReference를 한꺼번에 가져오는 예제입니다.
+2. listAll() - StorageReference를 한번에 가져오는 예제입니다.
 
 ```kotlin
 val reference: StorageReference = storage.reference.child(
