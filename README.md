@@ -90,7 +90,7 @@ Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 �
 val storage = FirebaseStorage.getInstance()
 ```
 
-
+  
 
 2. 그런 다음 업로드 또는 다운로드할 파일의 경로를 참조해야합니다. 만약 단일 파일이라면 아래와같이 child() 메소드를 사용하면됩니다.
 
@@ -101,9 +101,11 @@ val reference = storage.reference.child("google_icons/drawable-xhdpi/icon.png")
 
 ```
 
-변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다.
+변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다.  
 
 
+
+  
 
 3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Url을 얻습니다.
 
@@ -121,7 +123,7 @@ downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트
 
 
 
-
+  
 
 <b>만약 단일 파일이 아니라 폴더 전체를 대상으로 가져와야한다면?</b>
 
@@ -133,7 +135,7 @@ listAll()은 하위 경로에 있는 모든 파일에 대한 StorageReference를
 
 
 
-
+  
 
 1. list() - StorageReference를 100개 단위로 가져오는 예제입니다.
 
@@ -174,7 +176,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 
 
-
+  
 
 2. listAll() - StorageReference를 한번에 가져오는 예제입니다.
 
