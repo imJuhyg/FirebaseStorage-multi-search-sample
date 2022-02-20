@@ -60,21 +60,22 @@ class MainActivity : AppCompatActivity() {
         if(!getNetworkState()) {
             /* 순간적인 네트워크 상태를 알 수 있습니다 */
             Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
-        }
 
-        // directory path ex) https://firebase-storage/google_icons/drawable-xxhdpi/
-        directoryPath = "google_icons/drawable-${getDeviceDpi()}/"
-        storageAllReference = storage.reference.child(directoryPath)
+        } else {
+            // directory path ex) https://firebase-storage/google_icons/drawable-xxhdpi/
+            directoryPath = "google_icons/drawable-${getDeviceDpi()}/"
+            storageAllReference = storage.reference.child(directoryPath)
 
-        val listAllTask: Task<ListResult> = storageAllReference.listAll()
-        listAllTask.addOnFailureListener {
-            /* 리스트를 불러오는 데에 실패한 경우입니다. */
+            val listAllTask: Task<ListResult> = storageAllReference.listAll()
+            listAllTask.addOnFailureListener {
+                /* 리스트를 불러오는 데에 실패한 경우입니다. */
 
-        }.addOnCompleteListener {
-            if(it.isSuccessful) {
-                /* 성공적으로 결과를 불러왔을 경우입니다 */
-                imageFileReferences = it.result!!.items
-                editText.isEnabled = true
+            }.addOnCompleteListener {
+                if(it.isSuccessful) {
+                    /* 성공적으로 결과를 불러왔을 경우입니다 */
+                    imageFileReferences = it.result!!.items
+                    editText.isEnabled = true
+                }
             }
         }
     }
@@ -100,11 +101,11 @@ class MainActivity : AppCompatActivity() {
 
                 for(reference in imageFileReferences) {
                     if(reference.name.contains(fileName)) {
-                        ++itemCount // 불러올 아이콘 개수를 확인
+                        ++itemCount // 불러올 파일 개수를 확인
                     }
                 }
 
-                if(itemCount == 0) { // 검색 결과가 없는 경우
+                if(itemCount == 0) { // 해당하는 항목이 없을경우
                     progressBar.visibility = View.GONE
                     editText.isEnabled = true
                     Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
