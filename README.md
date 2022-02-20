@@ -16,7 +16,7 @@
 
 * Platform <b>Android</b>
 * Language <b>Kotlin 1.5</b>
-* Library <b>Firebase, Glide, Coroutine</b>
+* Library <b>Firebase, Glide</b>
 
 
 
