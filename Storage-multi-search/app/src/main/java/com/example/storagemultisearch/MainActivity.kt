@@ -12,16 +12,12 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.lifecycle.ViewModelProvider
 import com.example.storagemultisearch.util.getDeviceDpi
 import com.example.storagemultisearch.util.getNetworkState
 import com.example.storagemultisearch.util.registerNetworkCallback
 import com.example.storagemultisearch.util.unregisterNetworkCallback
-import com.google.android.gms.auth.api.signin.internal.Storage
-import com.google.android.gms.tasks.OnCanceledListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.*
-import kotlinx.coroutines.*
 
 /**
  * MainActivity:

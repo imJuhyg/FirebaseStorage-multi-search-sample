@@ -47,11 +47,11 @@
    }
    ```
 
-3. Firebase Storage에 검색할 수 있는 이미지파일을 업로드하세요. 예제에서는 Google에서 제공하는 Material Icon을 사용합니다.
+3. Firebase Storage에 검색할 수 있는 이미지 파일을 업로드하세요. 예제에서는 Google에서 제공하는 Material Icon을 사용합니다.
 
-   Google material icons는 구글에서 해상도별로 제공하는 아이콘 디자인 모음입니다. 따라서 멀티서치에 사용하기에도 적합합니다. <b>예제를 수월하게 따라하실 수 있도록 이름과 폴더를 깔끔하게 정리하여 깃 저장소에 올려두었습니다.</b>
+   + Google material icons는 구글에서 해상도별로 제공하는 아이콘 디자인 모음입니다. <b>예제를 수월하게 따라 하실 수 있도록 이름과 폴더를 깔끔하게 정리하여 깃 저장소에 올려두었습니다.</b>
 
-4. Firebase, Glide 라이브러리를 모듈수준 build.gradle에 삽입하세요.
+4. Firebase, Glide 라이브러리를 모듈 수준 build.gradle에 삽입하세요.
 
    ```groovy
    // Firebase
@@ -74,7 +74,7 @@
 
 
 
-Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 저장하고 공유할 수 있도록 해줍니다. 클라우드에 업로드되어있는 파일들을 내려받을 수도 있고 업로드할 수도 있습니다. 또한 네트워크 상태가 좋지 못할 때 자동으로 중단된 위치부터 작업을 재시도해주는 장점도 있습니다.  
+Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 저장하고 공유할 수 있도록 해줍니다. 클라우드에 업로드되어 있는 파일들을 내려받을 수도 있고 업로드할 수도 있습니다. 네트워크 상태가 좋지 못할 때 자동으로 중단된 위치부터 작업을 재시도해 주는 장점도 있습니다.  
 
 
 
@@ -82,7 +82,7 @@ Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 �
 
 ### Firebase Storage 사용방식
 
-<b>우선 저장소에있는 개별 Url을 불러오는 방법입니다.</b>
+<b><단일 파일에 대한 Uri을 불러오는 방법></b>
 
 1. 먼저 FirebaseStorage의 instance를 가져옵니다.
 
@@ -90,22 +90,24 @@ Firebase Storage는 애플리케이션이 이미지나 동영상 파일 등을 �
 val storage = FirebaseStorage.getInstance()
 ```
 
-  
+​      
 
-2. 그런 다음 업로드 또는 다운로드할 파일의 경로를 참조해야합니다. 만약 단일 파일이라면 아래와같이 child() 메소드를 사용하면됩니다.
+​      
+
+2. 그런 다음 업로드 또는 다운로드할 파일의 경로를 참조해야합니다. 단일 파일이라면 아래와같이 child() 메소드를 사용하면됩니다.
 
 ```kotlin
 
 val storage = FirebaseStorage.getInstance()
-val reference = storage.reference.child("google_icons/drawable-xhdpi/icon.png")
+val reference: StorageReference = storage.reference.child("google_icons/drawable-xhdpi/icon.png")
 
 ```
 
-변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다.  
+  변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.
 
 
 
-  
+​    
 
 3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Url을 얻습니다.
 
@@ -121,79 +123,83 @@ reference.downloadUrl.addOnSuccessListener { uri ->
 
 downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트워킹 작업을 위해 스레드를 따로 생성할 필요가 없습니다.  
 
+   
 
+​      
+
+<b><폴더 전체를 대상으로 Uri를 가져오는 방법></b>
+
+경로가 단일 파일을 지정하는 것이 아닌 "/google_icons/drawable-xhdpi/" 처럼 상위 폴더만을 지정했을 때 하위 경로에 있는 모든 파일을 참조할 수 있는 방법도 있습니다. 이때는 StorageReference의 list() 또는 listAll() 메소드를 사용합니다.
 
   
 
-<b>만약 단일 파일이 아니라 폴더 전체를 대상으로 가져와야한다면?</b>
+list()는 pageToken을 통해 파일들에 대한 StorageReference를 일정 단위로 잘라서 가져올 수 있습니다. 일관된 페이지 수를 제공해야 하거나 추가 결과를 가져올 시기를 제어할 때 사용합니다.  
 
-예를 들어 경로가 단일 파일을 지정하는 것이 아닌 "/google_icons/drawable-xhdpi/" 처럼 상위 폴더만을 지정했을 때 하위 경로에 있는 모든 파일을 참조할 수 있는 방법도 있습니다. 이 때는 StorageReference의 list() 또는 listAll() 메소드를 사용합니다.
-
-list()는 pageToken을 통해 파일들에 대한 StorageReference를 일정단위로 잘라서 가져올 수 있습니다. 일관된 페이지 수를 제공해야 하거나 추가 결과를 가져올 시기를 제어할 때 사용합니다.
+  
 
 listAll()은 하위 경로에 있는 모든 파일에 대한 StorageReference를 리스트형태로 반환 받을 수 있습니다.
 
-
+  
 
   
 
-1. list() - StorageReference를 100개 단위로 가져오는 예제입니다.
+1. list(): StorageReference를 100개 단위로 가져오는 예제입니다.
 
 ```kotlin
 fun listAllPaginated(pageToken: String?) {
-    val reference: StorageReference = storage.reference.child(
-        "google_icons/drawable-xxhdpi/"
-    ) // drawable-xxhdpi폴더의 하위 항목들에 대한 StorageReference를 생성합니다.
+  val reference: StorageReference = storage.reference.child(
+    "google_icons/drawable-xxhdpi/"
+  ) // drawable-xxhdpi폴더의 하위 항목들에 대한 StorageReference를 생성합니다.
 
-    val listPageTask: Task<ListResult> = if(pageToken != null) {
-        reference.list(100, pageToken)
-    } else {
-        reference.list(100)
-    }
+  val listPageTask: Task<ListResult> = if(pageToken != null) {
+    reference.list(100, pageToken)
+  } else {
+    reference.list(100)
+  }
 
-    listPageTask.addOnSuccessListener { listResult ->
-				// 100개 단위로 StorageReference를 받을 수 있습니다.
-				// 마지막 토큰인 경우 List의 사이즈는 100이 아닐 수 있습니다.
-        val referenceList: List<StorageReference> = listResult.items
+  listPageTask.addOnSuccessListener { listResult ->
+		// 100개 단위로 StorageReference를 받을 수 있습니다.
+    val referenceList: List<StorageReference> = listResult.items
 
-        /* 다음 페이지로 진행할 수 있습니다. */
-        listResult.pageToken?.let { pageToken -> listAllPaginated(pageToken) }
+    /* 다음 페이지로 진행할 수 있습니다. */
+    listResult.pageToken?.let { pageToken -> listAllPaginated(pageToken) }
 
-    }.addOnFailureListener {
+  }.addOnFailureListener {
 
-    }
+  }
 }
 
 override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-  	setContentView(R.layout.activity_main)
+  super.onCreate(savedInstanceState)
+  setContentView(R.layout.activity_main)
 
-  	listAllPaginated(null) // 첫 페이지 토큰을 null로 할당합니다.
+  listAllPaginated(null) // 첫 페이지 토큰을 null로 할당합니다.
 
-  	// ... ///
+  // ... ///
 
 ```
 
-
-
   
+
+​    
 
 2. listAll() - StorageReference를 한번에 가져오는 예제입니다.
 
 ```kotlin
 val reference: StorageReference = storage.reference.child(
-    "google_icons/drawable-xxhdpi/"
+  "google_icons/drawable-xxhdpi/"
 ) // drawable-xxhdpi폴더의 하위 항목들에 대한 StorageReference를 생성합니다.
 
 val listAllTask: Task<ListResult> = reference.listAll()
 listAllTask.addOnFailureListener {
 
 }.addOnCompleteListener {
-    if (it.isSuccessful) {
-    	/* 성공적으로 결과를 불러왔을 경우입니다 */            
-    	val referenceList: List<StorageReference> = it.result!!.items
-      
-      // ... //
+  if (it.isSuccessful) {
+    /* 성공적으로 결과를 불러왔을 경우입니다 */            
+    val referenceList: List<StorageReference> = it.result!!.items
+
+    // ... //
+  }
 }
 ```
 
@@ -209,7 +215,7 @@ listAllTask.addOnFailureListener {
 
 1. 디바이스의 네트워크 상태를 체크하세요.
 
-   NetworkState.kt의 메소드를 통해 네트워크의 순간적인 상태 확인 또는 실시간으로 네트워크 이벤트를 수신받을 수 있습니다. 아래는 네트워크 상태가 변동될 때 Callback을 받는 예시입니다.
+   NetworkStates.kt의 메소드를 통해 네트워크의 순간적인 상태 확인 또는 실시간으로 네트워크 이벤트를 수신받을 수 있습니다. 아래는 네트워크 상태가 변동될 때 Callback을 받는 예시입니다.
 
    ```kotlin
    /* NetworkStates.kt */
@@ -242,10 +248,10 @@ listAllTask.addOnFailureListener {
    }
    
    override fun onResume() {
-   	super.onResume()
+     super.onResume()
    
-   	registerNetworkCallback(networkCallback)
-     
+     registerNetworkCallback(networkCallback)
+   
      // ... //
    }
    ```
@@ -257,19 +263,30 @@ listAllTask.addOnFailureListener {
 2. 이미지 파일이 들어있는 전체경로를 얻습니다. 만약 이미지 파일이 해상도별로 구분되어 있다면, 아래처럼 getDeviceDpi() 유틸 메소드를 사용하여 디바이스의 해상도를 경로에 적용시킬 수 있습니다.
 
    ```kotlin
-   // directory path ex) https://firebase-storage/google_icons/drawable-xxhdpi/
-   directoryPath = "google_icons/drawable-${getDeviceDpi()}/"
-   storageAllReference = storage.reference.child(directoryPath)
+   override fun onCreate(savedInstanceState: Bundle?) {
+     super.onCreate(savedInstanceState)
+     setContentView(R.layout.activity_main)
    
-   val listAllTask: Task<ListResult> = storageAllReference.listAll()
-   listAllTask.addOnFailureListener {
-     /* 리스트를 불러오는 데에 실패한 경우입니다. */
+     if(!getNetworkState()) {
+       /* 순간적인 네트워크 상태를 알 수 있습니다 */
+       Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
    
-   }.addOnCompleteListener {
-     if(it.isSuccessful) {
-       /* 성공적으로 결과를 불러왔을 경우입니다 */
-       val imageFileReferences: List<StorageReference> = it.result!!.items
-       editText.isEnabled = true // 결과를 불러오기 전에 레퍼런스가 참조되는 것을 막습니다.
+     } else {
+       // directory path ex) https://firebase-storage/google_icons/drawable-xxhdpi/
+       directoryPath = "google_icons/drawable-${getDeviceDpi()}/"
+       storageAllReference = storage.reference.child(directoryPath)
+   
+       val listAllTask: Task<ListResult> = storageAllReference.listAll()
+       listAllTask.addOnFailureListener {
+         /* 리스트를 불러오는 데에 실패한 경우입니다. */
+   
+       }.addOnCompleteListener {
+         if(it.isSuccessful) {
+           /* 성공적으로 결과를 불러왔을 경우입니다 */
+           imageFileReferences = it.result!!.items
+           editText.isEnabled = true // 결과를 불러오기 전에 레퍼런스가 참조되는 것을 막습니다.
+         }
+       }
      }
    }
    ```
@@ -285,29 +302,31 @@ util/DeviceDpi.kt의 getDeviceDpi() 메소드를 사용하세요.
 3. 사용자가 파일 이름의 일부분을 입력하게되면, StorageReference 리스트에서 불러올 파일이 있는지 확인하고 파일의 개수를 확인합니다. 아래 코드는 StorageReference의 <b>getName</b> 메소드와 <b>contains()</b>를 조합하여 파일 이름에 사용자가 입력한 내용이 포함되는지 확인합니다.
 
 ```kotlin
-editText.setOnEditorActionListener { textView, actionId, keyEvent ->
-  if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
-    val uriList = ArrayList<Uri>()
-    val fileName = textView.text.toString()
-    var itemCount = 0
+override fun onResume() {
+  editText.setOnEditorActionListener { textView, actionId, keyEvent ->
+    if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
+      val uriList = ArrayList<Uri>()
+      val fileName = textView.text.toString()
+      var itemCount = 0
 
-    progressBar.visibility = View.VISIBLE
-    editText.isEnabled = false
+      progressBar.visibility = View.VISIBLE
+      editText.isEnabled = false
 
-    for(reference in imageFileReferences) {
-      if(reference.name.contains(fileName)) {
-        ++itemCount // 불러올 파일 개수를 확인
+      for(reference in imageFileReferences) {
+        if(reference.name.contains(fileName)) {
+          ++itemCount // 불러올 파일 개수를 확인
+        }
       }
-    }
 
-    if(itemCount == 0) { // 해당하는 항목이 없을 경우
-      progressBar.visibility = View.GONE
-      editText.isEnabled = true
-      Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-      true
+      if(itemCount == 0) { // 해당하는 항목이 없을 경우
+        progressBar.visibility = View.GONE
+        editText.isEnabled = true
+        Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+        true
+      }
+
+      // ... 아래 코드에서 계속 ... //
     }
-    
-    // ... 아래 코드에서 계속 ... //
   }
 }
 ```
@@ -341,7 +360,7 @@ for(reference in imageFileReferences) {
 }
 ```
 
-주의할 점은 <b>getDownloadUrl()</b> 메소드는 한번 호출되면 자체적으로 비동기적으로 처리합니다. 따라서 스레드를 따로 생성할 필요는 없지만 메인 스레드와는 별개로 처리되기 때문에 for 문이 끝나도 downloadUrl 작업은 여전히 실행되고 있을 수 있습니다. 그렇기 때문에 for문이 끝났을 때 반환값을 처리하는 것이 아니라 의도한 검색 결과 개수가 일치할 때 반환값을 처리해야 합니다. 위의 코드는 uri를 담는 리스트의 사이즈가 미리 계산한 itemCount의 값과 일치할 때 반환값을 처리합니다.
+주의할 점은 <b>getDownloadUrl()</b> 메소드는 한번 호출되면 자체적으로 비동기적으로 처리합니다. 스레드를 따로 생성할 필요는 없지만 메인 스레드와는 별개로 처리되기 때문에 for 문이 끝나도 downloadUrl 작업은 여전히 실행되고 있을 수 있습니다. 그렇기 때문에 for문이 끝났을 때 반환값을 처리하는 것이 아니라 의도한 검색 결과 개수가 일치할 때 반환값을 처리해야 합니다. 위의 코드는 uri를 담는 리스트의 사이즈가 미리 계산한 itemCount의 값과 일치할 때 반환값을 처리합니다.
 
   
 
@@ -386,3 +405,11 @@ fun addItem(uri: Uri) {
 // ... //
 
 ```
+
+
+
+---
+
+### 후기
+
+현재는 여러 개의 파일 Url을 하나씩 다운로드하고 있습니다. 이 경우 이미 요청되어진 downloadUrl에 대해서는 사용자가 중간에 작업을 취소할 수 없다는  문제점이 있습니다. 예제의 궁극적인 목표는 검색된 파일에 대한 Url을 다운로드할 때 한번에 요청 하고 중간에 취소가 가능한 Handling Task를 만드는 것이었지만 downloadUrl 만으로는 한계가 있음을 알게되었습니다. 목표 도달에는 실패했지만 더 성장해서 완성도있는 프로젝트로 업데이트하겠습니다.
