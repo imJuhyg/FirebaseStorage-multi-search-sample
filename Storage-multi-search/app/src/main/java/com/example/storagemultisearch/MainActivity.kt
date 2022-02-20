@@ -1,19 +1,24 @@
 package com.example.storagemultisearch
 
+import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.lifecycle.ViewModelProvider
 import com.example.storagemultisearch.util.getDeviceDpi
 import com.example.storagemultisearch.util.getNetworkState
 import com.example.storagemultisearch.util.registerNetworkCallback
 import com.example.storagemultisearch.util.unregisterNetworkCallback
 import com.google.android.gms.auth.api.signin.internal.Storage
+import com.google.android.gms.tasks.OnCanceledListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.*
 import kotlinx.coroutines.*
@@ -27,6 +32,7 @@ import kotlinx.coroutines.*
  */
 
 class MainActivity : AppCompatActivity() {
+    private val inputMethodManager by lazy { getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
     private val editText: EditText by lazy { findViewById(R.id.edit_text) }
     private val progressBar: ProgressBar by lazy { findViewById(R.id.progress_bar) }
     private lateinit var directoryPath: String
@@ -51,38 +57,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        ///
-
-        val reference: StorageReference = storage.reference.child(
-            "google_icons/drawable-xxhdpi/"
-        ) // drawable-xxhdpi폴더의 하위 항목들에 대한 StorageReference를 생성합니다.
-
-        val listAllTask2: Task<ListResult> = reference.listAll()
-        listAllTask2.addOnFailureListener {
-
-
-        }.addOnCompleteListener {
-            if (it.isSuccessful) {
-                /* 성공적으로 결과를 불러왔을 경우입니다 */
-
-                val referenceList: List<StorageReference> = it.result!!.items
-        }
-
-
-        ///
-
         if(!getNetworkState()) {
             /* 순간적인 네트워크 상태를 알 수 있습니다 */
             Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
         }
 
-        /**
-         * getDeviceDpi():
-         * 디바이스의 Dpi를 계산할 수 있습니다.
-         * 디바이스는 개별적인 Dpi를 가지고 있으며 이미지도 해당 Dpi에 맞는 이미지를 가져와야 합니다.
-         * 따라서 Firebase Storage에는 해상도별로 폴더가 구분되어 있어야 합니다.
-         */
         // directory path ex) https://firebase-storage/google_icons/drawable-xxhdpi/
         directoryPath = "google_icons/drawable-${getDeviceDpi()}/"
         storageAllReference = storage.reference.child(directoryPath)
@@ -92,10 +71,9 @@ class MainActivity : AppCompatActivity() {
             /* 리스트를 불러오는 데에 실패한 경우입니다. */
 
         }.addOnCompleteListener {
-            if (it.isSuccessful) {
+            if(it.isSuccessful) {
                 /* 성공적으로 결과를 불러왔을 경우입니다 */
                 imageFileReferences = it.result!!.items
-                /* 불러오기를 실패하거나 불러오는 중일 때 imageFileReferences 를 참조한다면 에러가 발생합니다. */
                 editText.isEnabled = true
             }
         }
@@ -111,55 +89,47 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "두 자 이상 입력해야 합니다.", Toast.LENGTH_SHORT).show()
 
             } else if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-                progressBar.visibility = View.VISIBLE // 프로그레스 바를 표시합니다.
+                val uriList = ArrayList<Uri>()
+                val fileName = textView.text.toString()
+                var itemCount = 0
 
-                CoroutineScope(Dispatchers.Main).launch {
-                    val fileName = editText.text.toString()
-                    var iconCount = 0
-                    /**
-                     * downloadUrl 작업은 개별적인 스레드를 실행합니다.
-                     * 즉 for 문이 끝나도 여전히 다운로드 중일 수 있습니다.
-                     * 이 경우 의도한 데이터와 실제 반환된 리스트에 있는 데이터가 일치하지 않을 수 있습니다.
-                     * 따라서 다운로드가 끝나기 전에 값을 반환하지 않도록 해야합니다.
-                     * iconCount는 이러한 역할을 하는 변수입니다.
-                     */
-                    for(reference in imageFileReferences) {
-                        if(reference.name.contains(fileName)) { // 검색되는 파일 개수를 먼저 확인합니다.
-                            ++iconCount
-                        }
+                progressBar.visibility = View.VISIBLE
+                inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
+                editText.setText("")
+                editText.isEnabled = false
+
+                for(reference in imageFileReferences) {
+                    if(reference.name.contains(fileName)) {
+                        ++itemCount // 불러올 아이콘 개수를 확인
                     }
+                }
 
-                    val downloadJob: Deferred<ArrayList<Uri>> = async(Dispatchers.IO) {
-                        val result = ArrayList<Uri>()
-
-                        for(reference in imageFileReferences) {
-                            if(reference.name.contains(fileName)) { // 검색한 내용이 파일 이름에 포함되는 경우입니다.
-                                reference.downloadUrl.addOnSuccessListener { uri ->
-                                    /* Url 가져오기에 성공했을 경우 입니다 */
-                                    result.add(uri)
-
-                                }.addOnFailureListener {
-                                    /* 실패한 경우 입니다 */
-                                    ArrayList<Uri>()
-
-                                }
-                            }
-                        }
-
-                        /* 데이터가 모두 불러와졌는지 확인하고 반환합니다. */
-                        while(true) {
-                            if(result.size == iconCount) break
-                        }
-
-                        result
-                    }
-                    downloadJob.join() // downloadJob의 작업이 끝나면 다음 코드가 실행됩니다.
-
+                if(itemCount == 0) { // 검색 결과가 없는 경우
                     progressBar.visibility = View.GONE
-                    val uriList: ArrayList<Uri> = downloadJob.await()
-                    val intent = Intent(this@MainActivity, SubActivity::class.java)
-                    intent.putExtra("URI_LIST", uriList)
-                    startActivity(intent)
+                    editText.isEnabled = true
+                    Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
+                for(reference in imageFileReferences) {
+                    if(reference.name.contains(fileName)) {
+                        reference.downloadUrl.addOnSuccessListener { uri ->
+                            uriList.add(uri)
+                            if(uriList.size == itemCount) { // 검색 완료
+                                val intent = Intent(this@MainActivity, SubActivity::class.java)
+                                intent.putExtra("URI_LIST", uriList)
+                                startActivity(intent)
+
+                                progressBar.visibility = View.GONE
+                                editText.isEnabled = true
+                            }
+
+                        }.addOnFailureListener {
+                            /* 다운로드에 실패한 경우입니다 */
+                            progressBar.visibility = View.GONE
+                            editText.isEnabled = true
+                        }
+                    }
                 }
             }
             true
