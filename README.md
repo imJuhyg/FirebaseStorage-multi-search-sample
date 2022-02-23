@@ -44,16 +44,24 @@
 
 <b>(22.02.24)</b> [네트워크 콜백](#예제)
 
-+ 네트워크가 변동되었을때 수신되는 networkCallback에서 UI를 변경하려는 경우
++ 네트워크가 변동되었을 때 수신되는 networkCallback에서 UI를 변경하려는 경우
 
-  메인 스레드에서 동작하도록 Handler를 사용해주세요.
+  메인 스레드에서 동작하도록 Handler를 사용해 주세요.
 
-  그렇지 않는 경우 CalledFromWrongThreadException이 발생합니다.
+  그렇지 않은 경우 CalledFromWrongThreadException이 발생합니다.
 
   ```
   android.view.ViewRootImpl$CalledFromWrongThreadException: 
   	Only the original thread that created a view hierarchy can touch its views.
   ```
+
+​    
+
+<b>(22.02.24)</b> [FailureListener](#firebase-storage-사용방식)
+
++ 네트워크 문제 등으로 인해 Firebase Storage와 작업 실패 시 FailureListener를 받기 위해서는
+
+  FirebaseStorage.maxDownloadRetryTimeMillis / maxOperationRetryMillis를 설정해야 합니다.
 
 ---
 
