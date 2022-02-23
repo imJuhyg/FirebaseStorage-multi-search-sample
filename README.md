@@ -1,5 +1,16 @@
 # FirebaseStorage multi search sample
 
+### 목차
+[1. 개요](#개요)  
+[2. 개발환경](#개발환경)  
+[3. 미리보기](#미리보기)  
+[4. 준비](#준비)  
+[5. Firebase개요](#firebase-개요)  
+[6. 예제](#예제)  
+[7. 후기](#후기)  
+
+---
+
 ### 개요
 
 1. 이 예제는 사용자가 입력한 내용의 일부분을 검색하여 복수 개의 결과를 가져오는 작업을 다룹니다.
@@ -9,7 +20,6 @@
 3. Firebase 라이브러리의 모든 부분을 다루지 않으며 꼭 필요한 부분만을 설명합니다.
 
    
-
 ---
 
 ### 개발환경
@@ -99,11 +109,15 @@ val reference: StorageReference = storage.reference.child("google_icons/drawable
 
 ```
 
+<<<<<<< HEAD
   변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.  
+=======
+  변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Uri을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.
+>>>>>>> bde3138908a38ca1f58304bf922f8eee94c3acaa
 
+​
 
-
-3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Url을 얻습니다.
+3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Uri를 얻습니다.
 
 ```kotlin
 reference.downloadUrl.addOnSuccessListener { uri ->
@@ -129,7 +143,7 @@ listAll()은 하위 경로에 있는 모든 파일에 대한 StorageReference를
 
 ​    
 
-1. list(): StorageReference를 100개 단위로 가져오는 예제입니다.
+1. list(): StorageReference를 100개 단위로 가져오는 예시입니다.
 
 ```kotlin
 fun listAllPaginated(pageToken: String?) {
@@ -144,7 +158,11 @@ fun listAllPaginated(pageToken: String?) {
   }
 
   listPageTask.addOnSuccessListener { listResult ->
+<<<<<<< HEAD
 	  // 100개 단위로 StorageReference를 받을 수 있습니다.
+=======
+    // 100개 단위로 StorageReference를 받을 수 있습니다.
+>>>>>>> bde3138908a38ca1f58304bf922f8eee94c3acaa
     val referenceList: List<StorageReference> = listResult.items
 
     /* 다음 페이지로 진행할 수 있습니다. */
@@ -165,11 +183,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ```
 
-  
-
 ​    
 
-2. listAll() - StorageReference를 한번에 가져오는 예제입니다.
+2. listAll() - StorageReference를 한번에 가져오는 예시입니다.
 
 ```kotlin
 val reference: StorageReference = storage.reference.child(
@@ -188,8 +204,6 @@ listAllTask.addOnFailureListener {
   }
 }
 ```
-
-
 
 ---
 
@@ -240,9 +254,7 @@ listAllTask.addOnFailureListener {
    
      // ... //
    }
-   ```
-
-   ​        
+   ```    
 
    ​      
 
@@ -276,121 +288,116 @@ listAllTask.addOnFailureListener {
      }
    }
    ```
-
-​    
-
-util/DeviceDpi.kt의 getDeviceDpi() 메소드를 사용하세요.
-
-  EditText의 enabled 기본값은 false입니다. 이는 전체 경로를 참조할 수 있는 StorageReference 리스트가 생성되지 않았을 때 사용자가 검색하는 것을 방지합니다.
+   EditText의 enabled 기본값은 false입니다. 이는 전체 경로를 참조할 수 있는 StorageReference 리스트가 생성되지 않았을 때 사용자가 검색하는 것을 방지합니다.
 
 ​    
 
 3. 사용자가 파일 이름의 일부분을 입력하게되면, StorageReference 리스트에서 불러올 파일이 있는지 확인하고 파일의 개수를 확인합니다. 아래 코드는 StorageReference의 <b>getName</b> 메소드와 <b>contains()</b>를 조합하여 파일 이름에 사용자가 입력한 내용이 포함되는지 확인합니다.
 
-```kotlin
-override fun onResume() {
-  editText.setOnEditorActionListener { textView, actionId, keyEvent ->
-    if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
-      val uriList = ArrayList<Uri>()
-      val fileName = textView.text.toString()
-      var itemCount = 0
+   ```kotlin
+   override fun onResume() {
+     editText.setOnEditorActionListener { textView, actionId, keyEvent ->
+       if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
+         val uriList = ArrayList<Uri>()
+         val fileName = textView.text.toString()
+         var itemCount = 0
 
-      progressBar.visibility = View.VISIBLE
-      editText.isEnabled = false
+         progressBar.visibility = View.VISIBLE
+         editText.isEnabled = false
 
-      for(reference in imageFileReferences) {
-        if(reference.name.contains(fileName)) {
-          ++itemCount // 불러올 파일 개수를 확인
-        }
-      }
+         for(reference in imageFileReferences) {
+           if(reference.name.contains(fileName)) {
+             ++itemCount // 불러올 파일 개수를 확인
+           }
+         }
 
-      if(itemCount == 0) { // 해당하는 항목이 없을 경우
-        progressBar.visibility = View.GONE
-        editText.isEnabled = true
-        Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-        true
-      }
+         if(itemCount == 0) { // 해당하는 항목이 없을 경우
+           progressBar.visibility = View.GONE
+           editText.isEnabled = true
+           Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+           true
+         }
 
-      // ... 아래 코드에서 계속 ... //
-    }
-  }
-}
-```
+         // ... 아래 코드에서 계속 ... //
+       }
+     }
+   }
+   ```
 
 ​      
 
 4. 불러올 파일이 있다면 StorageReference의 <b>getDownloadUrl()</b> 메소드를 사용해 Uri를 가져옵니다.
 
-```kotlin
-for(reference in imageFileReferences) {
-	if(reference.name.contains(fileName)) {
-    reference.downloadUrl.addOnSuccessListener { uri ->
-  		uriList.add(uri)
+   ```kotlin
+   for(reference in imageFileReferences) {
+     if(reference.name.contains(fileName)) {
+       reference.downloadUrl.addOnSuccessListener { uri ->
+         uriList.add(uri)
                                                 
-      if(uriList.size == itemCount) { // 검색 완료
-        // 검색 결과 넘겨주기
-      	val intent = Intent(this@MainActivity, SubActivity::class.java)
-        intent.putExtra("URI_LIST", uriList)
-        startActivity(intent)
+         if(uriList.size == itemCount) { // 검색 완료
+           // 검색 결과 넘겨주기
+      	   val intent = Intent(this@MainActivity, SubActivity::class.java)
+           intent.putExtra("URI_LIST", uriList)
+           startActivity(intent)
 
-        progressBar.visibility = View.GONE
-        editText.isEnabled = true
-    	}
+           progressBar.visibility = View.GONE
+           editText.isEnabled = true
+         }
                                                 
-    }.addOnFailureListener {
-    	/* 다운로드에 실패한 경우입니다 */
-      progressBar.visibility = View.GONE
-      editText.isEnabled = true
-    }
-  }
-}
-```
+       }.addOnFailureListener {
+         /* 다운로드에 실패한 경우입니다 */
+         progressBar.visibility = View.GONE
+         editText.isEnabled = true
+       }
+     }
+   }
+   ```
 
-  주의할 점은 <b>getDownloadUrl()</b> 메소드는 한번 호출되면 자체적으로 비동기적으로 처리합니다. 스레드를 따로 생성할 필요는 없지만 메인 스레드와는 별개로 처리되기 때문에 for 문이 끝나도 downloadUrl 작업은 여전히 실행되고 있을 수 있습니다. 그렇기 때문에 for문이 끝났을 때 반환값을 처리하는 것이 아니라 의도한 검색 결과 개수가 일치할 때 반환값을 처리해야 합니다. 위의 코드는 uri를 담는 리스트의 사이즈가 미리 계산한 itemCount의 값과 일치할 때 반환값을 처리합니다.
+   주의할 점은 <b>getDownloadUrl()</b> 메소드는 한번 호출되면 자체적으로 비동기적으로 처리합니다. 스레드를 따로 생성할 필요는 없지만 메인 스레드와는 별개로 처리되기 때문에 for 문이 끝나도 downloadUrl 작업은 여전히 실행되고 있을 수 있습니다. 그렇기 때문에 for문이 끝났을 때 반환값을 처리하는 것이 아니라 의도한 검색 결과 개수가 일치할 때 반환값을 처리해야 합니다. 위의 코드는 uri를 담는 리스트의 사이즈가 미리 계산한 itemCount의 값과 일치할 때 반환값을 처리합니다.
 
 ​       
 
 5. 검색된 결과를 리사이클러뷰에 표시합니다. 이미지 파일을 그대로 가져온 것이 아닌, Uri를 가져왔기 때문에 Glide 라이브러리를 사용하여 이미지를 표시하는 것이 편리합니다.
 
-```kotlin
-/* SubActivity */
-override fun onCreate(savedInstanceState: Bundle?) {
-  super.onCreate(savedInstanceState)
-  setContentView(R.layout.activity_sub)
+   ```kotlin
+   /* SubActivity */
+   override fun onCreate(savedInstanceState: Bundle?) {
+     super.onCreate(savedInstanceState)
+     setContentView(R.layout.activity_sub)
 
-  uriList = intent.getParcelableArrayListExtra("URI_LIST") ?: ArrayList()
+     uriList = intent.getParcelableArrayListExtra("URI_LIST") ?: ArrayList()
 
-  iconRecyclerViewAdapter = IconRecyclerViewAdapter(this)
+     iconRecyclerViewAdapter = IconRecyclerViewAdapter(this)
 
-  // 리사이클러뷰에 3열의 GridLayoutManager 를 적용합니다.
-  val gridLayoutManager = GridLayoutManager(this, 3)
-  recyclerView.layoutManager = gridLayoutManager
-  recyclerView.adapter = iconRecyclerViewAdapter
+     // 리사이클러뷰에 3열의 GridLayoutManager 를 적용합니다.
+     val gridLayoutManager = GridLayoutManager(this, 3)
+     recyclerView.layoutManager = gridLayoutManager
+     recyclerView.adapter = iconRecyclerViewAdapter
 
-  for(uri in uriList) {
-    iconRecyclerViewAdapter!!.addItem(uri)
-  }
-}
+     for(uri in uriList) {
+       iconRecyclerViewAdapter!!.addItem(uri)
+     }
+   }
 
 
-/* IconRecyclerViewAdapter */
-// ... //
+   /* IconRecyclerViewAdapter */
+   // ... //
 
-override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-  val item = iconItems[position]
-  Glide.with(context)
-  .load(item.uri)
-  .into(holder.imageView)
-}
+   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+     val item = iconItems[position]
+     Glide.with(context)
+     .load(item.uri)
+     .into(holder.imageView)
+   }
 
-fun addItem(uri: Uri) {
-  iconItems.add(IconRecyclerViewItem(uri))
-  notifyItemInserted(iconItems.size-1)
-}
+   fun addItem(uri: Uri) {
+     iconItems.add(IconRecyclerViewItem(uri))
+     notifyItemInserted(iconItems.size-1)
+   }
 
-// ... //
+   // ... //
 
-```
+   ```
 
 
 
