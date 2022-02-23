@@ -109,13 +109,8 @@ val reference: StorageReference = storage.reference.child("google_icons/drawable
 
 ```
 
-<<<<<<< HEAD
-  변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.  
-=======
   변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Uri을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.
->>>>>>> bde3138908a38ca1f58304bf922f8eee94c3acaa
-
-​
+​    
 
 3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Uri를 얻습니다.
 
@@ -254,7 +249,7 @@ listAllTask.addOnFailureListener {
    
      // ... //
    }
-   ```    
+   ```
 
    ​      
 
@@ -301,23 +296,23 @@ listAllTask.addOnFailureListener {
          val uriList = ArrayList<Uri>()
          val fileName = textView.text.toString()
          var itemCount = 0
-
+   
          progressBar.visibility = View.VISIBLE
          editText.isEnabled = false
-
+   
          for(reference in imageFileReferences) {
            if(reference.name.contains(fileName)) {
              ++itemCount // 불러올 파일 개수를 확인
            }
          }
-
+   
          if(itemCount == 0) { // 해당하는 항목이 없을 경우
            progressBar.visibility = View.GONE
            editText.isEnabled = true
            Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
            true
          }
-
+   
          // ... 아래 코드에서 계속 ... //
        }
      }
@@ -339,7 +334,7 @@ listAllTask.addOnFailureListener {
       	   val intent = Intent(this@MainActivity, SubActivity::class.java)
            intent.putExtra("URI_LIST", uriList)
            startActivity(intent)
-
+   
            progressBar.visibility = View.GONE
            editText.isEnabled = true
          }
@@ -364,39 +359,37 @@ listAllTask.addOnFailureListener {
    override fun onCreate(savedInstanceState: Bundle?) {
      super.onCreate(savedInstanceState)
      setContentView(R.layout.activity_sub)
-
+   
      uriList = intent.getParcelableArrayListExtra("URI_LIST") ?: ArrayList()
-
+   
      iconRecyclerViewAdapter = IconRecyclerViewAdapter(this)
-
+   
      // 리사이클러뷰에 3열의 GridLayoutManager 를 적용합니다.
      val gridLayoutManager = GridLayoutManager(this, 3)
      recyclerView.layoutManager = gridLayoutManager
      recyclerView.adapter = iconRecyclerViewAdapter
-
+   
      for(uri in uriList) {
        iconRecyclerViewAdapter!!.addItem(uri)
      }
    }
-
-
+   
    /* IconRecyclerViewAdapter */
    // ... //
-
+   
    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
      val item = iconItems[position]
      Glide.with(context)
      .load(item.uri)
      .into(holder.imageView)
    }
-
+   
    fun addItem(uri: Uri) {
      iconItems.add(IconRecyclerViewItem(uri))
      notifyItemInserted(iconItems.size-1)
    }
-
+   
    // ... //
-
    ```
 
 
