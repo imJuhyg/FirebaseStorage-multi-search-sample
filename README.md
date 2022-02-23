@@ -40,6 +40,23 @@
 
 ---
 
+### 수정사항
+
+<b>(22.02.24)</b> [네트워크 콜백](#예제)
+
++ 네트워크가 변동되었을때 수신되는 networkCallback에서 UI를 변경하려는 경우
+
+  메인 스레드에서 동작하도록 Handler를 사용해주세요.
+
+  그렇지 않는 경우 CalledFromWrongThreadException이 발생합니다.
+
+  ```
+  android.view.ViewRootImpl$CalledFromWrongThreadException: 
+  	Only the original thread that created a view hierarchy can touch its views.
+  ```
+
+---
+
 ### 준비
 
 1. Firebase Storage를 생성하고 앱 프로젝트에 적용해주세요. 자세한 절차는 [Firebase 문서](https://firebase.google.com/docs/android/setup?authuser=1) 를 참조하세요.
@@ -110,6 +127,7 @@ val reference: StorageReference = storage.reference.child("google_icons/drawable
 ```
 
   변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Uri을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.
+
 ​    
 
 3. 레퍼런스로 해당 경로의 이미지 파일을 열람할 수 있는 Uri를 얻습니다.
@@ -153,11 +171,7 @@ fun listAllPaginated(pageToken: String?) {
   }
 
   listPageTask.addOnSuccessListener { listResult ->
-<<<<<<< HEAD
-	  // 100개 단위로 StorageReference를 받을 수 있습니다.
-=======
     // 100개 단위로 StorageReference를 받을 수 있습니다.
->>>>>>> bde3138908a38ca1f58304bf922f8eee94c3acaa
     val referenceList: List<StorageReference> = listResult.items
 
     /* 다음 페이지로 진행할 수 있습니다. */
@@ -234,11 +248,17 @@ listAllTask.addOnFailureListener {
      override fun onAvailable(network: Network) {
        super.onAvailable(network)
        /* 네트워크가 활성화 된 경우 */
+       Handler(Looper.getMainLooper()).post {
+         /* UI를 변경하려는 경우 */
+       }
      }
    
      override fun onLost(network: Network) {
        super.onLost(network)
        /* 네트워크가 비활성화되거나 끊어진 경우 */
+       Handler(Looper.getMainLooper()).post {
+         /* UI를 변경하려는 경우 */
+       }
      }
    }
    
