@@ -7,6 +7,8 @@ import android.net.Network
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -41,11 +43,17 @@ class MainActivity : AppCompatActivity() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             /* 네트워크가 활성화 된 경우 */
+            Handler(Looper.getMainLooper()).post {
+                /* UI를 변경하려는 경우 */
+            }
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
             /* 네트워크가 비활성화되거나 끊어진 경우 */
+            Handler(Looper.getMainLooper()).post {
+                /* UI를 변경하려는 경우 */
+            }
         }
     }
 

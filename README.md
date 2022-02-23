@@ -99,7 +99,7 @@ val reference: StorageReference = storage.reference.child("google_icons/drawable
 
 ```
 
-  변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.
+  변수 reference는 StorageReference 타입입니다. 이 레퍼런스를 가지고 Url을 다운로드하거나 업로드 할 수 있으며 경로가 단일 파일이 아니라면 레퍼런스를 리스트로 구성할 수도 있습니다. 레퍼런스를 리스트로 구성하는 방법에 대해서는 아래에서 설명하겠습니다.  
 
 
 
@@ -107,11 +107,11 @@ val reference: StorageReference = storage.reference.child("google_icons/drawable
 
 ```kotlin
 reference.downloadUrl.addOnSuccessListener { uri ->
-	/* 다운로드에 성공한 경우입니다 */
+  /* 다운로드에 성공한 경우입니다 */
   /* Uri값을 받습니다 */
 
 }.addOnFailureListener { exception ->
-	/* 다운로드에 실패한 경우입니다 */
+  /* 다운로드에 실패한 경우입니다 */
 }
 ```
 
@@ -123,7 +123,7 @@ downloadUrl는 비동기적으로 작업을 실행합니다. 개발자가 네트
 
 경로가 단일 파일을 지정하는 것이 아닌 "/google_icons/drawable-xhdpi/" 처럼 상위 폴더만을 지정했을 때 하위 경로에 있는 모든 파일을 참조할 수 있는 방법도 있습니다. 이때는 StorageReference의 list() 또는 listAll() 메소드를 사용합니다.
 
-list()는 pageToken을 통해 파일들에 대한 StorageReference를 일정 단위로 잘라서 가져올 수 있습니다. 일관된 페이지 수를 제공해야 하거나 추가 결과를 가져올 시기를 제어할 때 사용합니다.  
+list()는 pageToken을 통해 StorageReference를 일정 단위로 잘라서 가져올 수 있습니다. 일관된 페이지 수를 제공해야 하거나 추가 결과를 가져올 시기를 제어할 때 사용합니다.
 
 listAll()은 하위 경로에 있는 모든 파일에 대한 StorageReference를 리스트형태로 반환 받을 수 있습니다.
 
@@ -144,7 +144,7 @@ fun listAllPaginated(pageToken: String?) {
   }
 
   listPageTask.addOnSuccessListener { listResult ->
-		// 100개 단위로 StorageReference를 받을 수 있습니다.
+	  // 100개 단위로 StorageReference를 받을 수 있습니다.
     val referenceList: List<StorageReference> = listResult.items
 
     /* 다음 페이지로 진행할 수 있습니다. */
