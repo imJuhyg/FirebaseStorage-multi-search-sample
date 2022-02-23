@@ -61,7 +61,7 @@
 
 + 네트워크 문제 등으로 인해 Firebase Storage와 작업 실패 시 FailureListener를 받기 위해서는
 
-  FirebaseStorage.maxDownloadRetryTimeMillis / maxOperationRetryMillis를 설정해야 합니다.
+  FirebaseStorage.maxDownloadRetryTimeMillis / maxOperationRetryTimeMillis를 설정해야 합니다.
 
 ---
 
