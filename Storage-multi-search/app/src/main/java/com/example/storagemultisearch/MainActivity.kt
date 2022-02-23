@@ -61,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Storage 작업 실패 시(네트워크 문제 등) Retry 시간을 설정해야 FailureListener 를 받을 수 있습니다.
+        storage.maxDownloadRetryTimeMillis = 1000
+        storage.maxOperationRetryTimeMillis = 1000
+
         if(!getNetworkState()) {
             /* 순간적인 네트워크 상태를 알 수 있습니다 */
             Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
