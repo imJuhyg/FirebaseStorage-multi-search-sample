@@ -314,7 +314,7 @@ listAllTask.addOnFailureListener {
    
    override fun onDestroy() {
      // onAvailable 또는 onLost 내부에서 핸들러를 사용했을 경우 액티비티가 Destroy될 때 해제해 주세요.
-     // 그렇지 않으면 메모리 누수의 원인이 될 수 있습니다.  
+     // 그렇게 하지 않으면 메모리 누수의 원인이 될 수 있습니다.  
      onAvailableHandler?.removeMessages(0)
      onAvailableHandler = null
      onLostHandler?.removeMessages(0)
