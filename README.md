@@ -73,6 +73,14 @@
 
   FirebaseStorage.maxDownloadRetryTimeMillis / maxOperationRetryTimeMillis를 설정해야 합니다.
 
+​    
+
+<b>(22.03.01)</b> [NetworkStates](#예제)
+
++ NetworkCallback 내부에서 핸들러를 사용할 경우 액티비티가 Destroy 될 때 여전히 동작할 수 있다는 것을 발견했습니다.
+
+  이 경우 메모리 누수의 원인이 될 수 있으므로 액티비티의 onDestroy 내부에서 핸들러를 종료시켜주세요.
+
 ---
 
 ### 준비
@@ -246,27 +254,39 @@ listAllTask.addOnFailureListener {
 
    ```kotlin
    /* NetworkStates.kt */
-   fun AppCompatActivity.registerNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
-     val connectivityManager = ContextCompat.getSystemService(
-       this,
-       ConnectivityManager::class.java
-     ) as ConnectivityManager
+   fun AppCompatActivity.registerNetworkCallback(
+     connectivityManager: ConnectivityManager,
+     networkCallback: ConnectivityManager.NetworkCallback) {
    
      val networkRequest = NetworkRequest.Builder()
-     .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-     .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-     .build()
+       .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+       .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+       .build()
+     
      connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
    }
    
+   fun AppCompatActivity.unregisterNetworkCallback(
+     connectivityManager: ConnectivityManager,
+     networkCallback: ConnectivityManager.NetworkCallback) {
+   
+     connectivityManager.unregisterNetworkCallback(networkCallback)
+   }
    
    /* MainActivity */
+   
+   private val connectivityManager by lazy {
+     ContextCompat.getSystemService(this, ConnectivityManager::class.java) as ConnectivityManager
+   }
+   private var onAvailableHandler: Handler? = Handler(Looper.getMainLooper())
+   private var onLostHandler: Handler? = Handler(Looper.getMainLooper())
+   
    /* 네트워크 상태가 변동될 때 Callback 됩니다. */
    private val networkCallback = object: ConnectivityManager.NetworkCallback() {
      override fun onAvailable(network: Network) {
        super.onAvailable(network)
        /* 네트워크가 활성화 된 경우 */
-       Handler(Looper.getMainLooper()).post {
+       onAvailableHandler?.post {
          /* UI를 변경하려는 경우 */
        }
      }
@@ -274,7 +294,7 @@ listAllTask.addOnFailureListener {
      override fun onLost(network: Network) {
        super.onLost(network)
        /* 네트워크가 비활성화되거나 끊어진 경우 */
-       Handler(Looper.getMainLooper()).post {
+       onLostHandler?.post {
          /* UI를 변경하려는 경우 */
        }
      }
@@ -283,9 +303,22 @@ listAllTask.addOnFailureListener {
    override fun onResume() {
      super.onResume()
    
-     registerNetworkCallback(networkCallback)
+     registerNetworkCallback(connectivityManager, networkCallback)
    
      // ... //
+   }
+   
+   override fun onStop() {
+     unregisterNetworkCallback(connectivityManager, networkCallback)
+   }
+   
+   override fun onDestroy() {
+     // onAvailable 또는 onLost 내부에서 핸들러를 사용했을 경우 액티비티가 Destroy될 때 해제해 주세요.
+     // 그렇지 않으면 메모리 누수의 원인이 될 수 있습니다.  
+     onAvailableHandler?.removeMessages(0)
+     onAvailableHandler = null
+     onLostHandler?.removeMessages(0)
+     onLostHandler = null
    }
    ```
 
@@ -298,7 +331,7 @@ listAllTask.addOnFailureListener {
      super.onCreate(savedInstanceState)
      setContentView(R.layout.activity_main)
    
-     if(!getNetworkState()) {
+     if(!getNetworkState(connectivityManager)) {
        /* 순간적인 네트워크 상태를 알 수 있습니다 */
        Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
    
