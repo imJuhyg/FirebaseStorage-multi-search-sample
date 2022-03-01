@@ -276,7 +276,7 @@ listAllTask.addOnFailureListener {
    /* MainActivity */
    
    private val connectivityManager by lazy {
-     ContextCompat.getSystemService(this, ConnectivityManager::class.java) as ConnectivityManager
+     ContextCompat.getSystemService(applicationContext, ConnectivityManager::class.java) as ConnectivityManager
    }
    private var onAvailableHandler: Handler? = Handler(Looper.getMainLooper())
    private var onLostHandler: Handler? = Handler(Looper.getMainLooper())
