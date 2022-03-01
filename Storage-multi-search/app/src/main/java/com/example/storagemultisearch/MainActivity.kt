@@ -14,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.example.storagemultisearch.util.getDeviceDpi
 import com.example.storagemultisearch.util.getNetworkState
 import com.example.storagemultisearch.util.registerNetworkCallback
@@ -37,13 +38,18 @@ class MainActivity : AppCompatActivity() {
     private val storage by lazy { FirebaseStorage.getInstance() }
     private lateinit var storageAllReference: StorageReference
     private lateinit var imageFileReferences: List<StorageReference>
+    private val connectivityManager by lazy {
+        ContextCompat.getSystemService(this, ConnectivityManager::class.java) as ConnectivityManager
+    }
+    private var onAvailableHandler: Handler? = Handler(Looper.getMainLooper())
+    private var onLostHandler: Handler? = Handler(Looper.getMainLooper())
 
     /* 네트워크 상태가 변동될 때 Callback 됩니다. */
     private val networkCallback = object: ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             /* 네트워크가 활성화 된 경우 */
-            Handler(Looper.getMainLooper()).post {
+            onAvailableHandler?.post {
                 /* UI를 변경하려는 경우 */
             }
         }
@@ -51,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         override fun onLost(network: Network) {
             super.onLost(network)
             /* 네트워크가 비활성화되거나 끊어진 경우 */
-            Handler(Looper.getMainLooper()).post {
+            onLostHandler?.post {
                 /* UI를 변경하려는 경우 */
             }
         }
@@ -65,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         storage.maxDownloadRetryTimeMillis = 1000
         storage.maxOperationRetryTimeMillis = 1000
 
-        if(!getNetworkState()) {
+        if(!getNetworkState(connectivityManager)) {
             /* 순간적인 네트워크 상태를 알 수 있습니다 */
             Toast.makeText(this, "연결된 네트워크가 없습니다.", Toast.LENGTH_SHORT).show()
 
@@ -91,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        registerNetworkCallback(networkCallback)
+        registerNetworkCallback(connectivityManager, networkCallback)
 
         editText.setOnEditorActionListener { textView, actionId, keyEvent ->
             if(textView.text.length < 2) { // 2자 미만을 검색했을 때 작업시간이 오래 걸릴 수 있습니다.
@@ -147,6 +153,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        unregisterNetworkCallback(networkCallback)
+        unregisterNetworkCallback(connectivityManager, networkCallback)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // 핸들러를 제거합니다.
+        onAvailableHandler?.removeMessages(0)
+        onAvailableHandler = null
+
+        onLostHandler?.removeMessages(0)
+        onLostHandler = null
     }
 }

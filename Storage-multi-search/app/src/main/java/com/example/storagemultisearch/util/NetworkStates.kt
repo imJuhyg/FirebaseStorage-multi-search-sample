@@ -6,12 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
 /* 순간적인 네트워크 상태 가져오기 */
-fun AppCompatActivity.getNetworkState(): Boolean {
-    val connectivityManager = ContextCompat.getSystemService(
-        this,
-        ConnectivityManager::class.java
-    ) as ConnectivityManager
-
+fun AppCompatActivity.getNetworkState(connectivityManager: ConnectivityManager): Boolean {
     if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
         val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
         return networkInfo?.isConnected ?: false
@@ -27,11 +22,9 @@ fun AppCompatActivity.getNetworkState(): Boolean {
 }
 
 /* 네트워크 이벤트 수신 대기 */
-fun AppCompatActivity.registerNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
-    val connectivityManager = ContextCompat.getSystemService(
-        this,
-        ConnectivityManager::class.java
-    ) as ConnectivityManager
+fun AppCompatActivity.registerNetworkCallback(
+    connectivityManager: ConnectivityManager,
+    networkCallback: ConnectivityManager.NetworkCallback) {
 
     val networkRequest = NetworkRequest.Builder()
         .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
@@ -40,11 +33,9 @@ fun AppCompatActivity.registerNetworkCallback(networkCallback: ConnectivityManag
     connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
 }
 
-fun AppCompatActivity.unregisterNetworkCallback(networkCallback: ConnectivityManager.NetworkCallback) {
-    val connectivityManager = ContextCompat.getSystemService(
-        this,
-        ConnectivityManager::class.java
-    ) as ConnectivityManager
+fun AppCompatActivity.unregisterNetworkCallback(
+    connectivityManager: ConnectivityManager,
+    networkCallback: ConnectivityManager.NetworkCallback) {
 
     connectivityManager.unregisterNetworkCallback(networkCallback)
 }
