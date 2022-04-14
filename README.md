@@ -361,32 +361,30 @@ listAllTask.addOnFailureListener {
 3. 사용자가 파일 이름의 일부분을 입력하게되면, StorageReference 리스트에서 불러올 파일이 있는지 확인하고 파일의 개수를 확인합니다. 아래 코드는 StorageReference의 <b>getName</b> 메소드와 <b>contains()</b>를 조합하여 파일 이름에 사용자가 입력한 내용이 포함되는지 확인합니다.
 
    ```kotlin
-   override fun onResume() {
-     editText.setOnEditorActionListener { textView, actionId, keyEvent ->
-       if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
-         val uriList = ArrayList<Uri>()
-         val fileName = textView.text.toString()
-         var itemCount = 0
-   
-         progressBar.visibility = View.VISIBLE
-         editText.isEnabled = false
-   
-         for(reference in imageFileReferences) {
-           if(reference.name.contains(fileName)) {
-             ++itemCount // 불러올 파일 개수를 확인
-           }
-         }
-   
-         if(itemCount == 0) { // 해당하는 항목이 없을 경우
-           progressBar.visibility = View.GONE
-           editText.isEnabled = true
-           Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-           true
-         }
-   
-         // ... 아래 코드에서 계속 ... //
-       }
-     }
+   editText.setOnEditorActionListener { textView, actionId, keyEvent ->
+    if(actionId == EditorInfo.IME_ACTION_SEARCH) { // 검색 버튼을 눌렀을 때
+      val uriList = ArrayList<Uri>()
+      val fileName = textView.text.toString()
+      var itemCount = 0
+
+      progressBar.visibility = View.VISIBLE
+      editText.isEnabled = false
+
+      for(reference in imageFileReferences) {
+        if(reference.name.contains(fileName)) {
+          ++itemCount // 불러올 파일 개수를 확인
+        }
+      }
+
+      if(itemCount == 0) { // 해당하는 항목이 없을 경우
+        progressBar.visibility = View.GONE
+        editText.isEnabled = true
+        Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+        true
+      }
+
+      // ... 아래 코드에서 계속 ... //
+    }
    }
    ```
 
