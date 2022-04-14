@@ -92,12 +92,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        registerNetworkCallback(connectivityManager, networkCallback)
 
         editText.setOnEditorActionListener { textView, actionId, keyEvent ->
             if(textView.text.length < 2) { // 2자 미만을 검색했을 때 작업시간이 오래 걸릴 수 있습니다.
@@ -149,6 +143,12 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        registerNetworkCallback(connectivityManager, networkCallback)
     }
 
     override fun onStop() {
